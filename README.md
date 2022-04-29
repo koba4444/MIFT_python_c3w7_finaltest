@@ -1,7 +1,10 @@
 # MIFT_python_c3w7_finaltest
 Final test of course "Создание Web-сервисов на Python" https://www.coursera.org/learn/python-for-web/home/welcome
 
+Test solution consists of files: coursera_house/core/operate.py, coursera_house/core/task.py, coursera_house/core/views.py, coursera_house/core/validate.py
+
 The test  assignment is as following:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Описание проекта
 Вашей задачей будет реализовать на Django сервер управления умным домом, имеющий web-интерфейс для настройки и ручного управления, который будет производить периодический опрос датчиков и осуществлять автоматическую реакцию в случае определенных ситуаций, используя API контроллера умного дома
@@ -121,3 +124,4 @@ marshmallow
 jsonschema 
 
 или с помощью класса Forms. Также в проекте установлен фреймворк для тестирования py.test https://docs.pytest.org/en/latest/
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
