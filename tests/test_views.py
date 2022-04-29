@@ -15,6 +15,7 @@ class TestViews():
                       json=response_ok, status=200, headers=headers)
 
         response = client.get('/')
+        print(response)
         assert response.status_code == 200
         assert response['Content-Type'] == 'text/html; charset=utf-8'
         document = response.content.decode('utf-8')

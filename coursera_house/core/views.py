@@ -4,12 +4,14 @@ import requests
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import FormView
-from .tasks import smart_home_manager, send_mail_task, addd
+
+from .operate import HomeControllersData, CONTROLLER_WRITABLES
+
 
 from .models import Setting
 from .form import ControllerForm
 from .validate import SettingSchema
-from ..settings import SMART_HOME_API_URL, SMART_HOME_ACCESS_TOKEN, CONTROLLER_WRITABLES
+from coursera_house.settings import SMART_HOME_API_URL, SMART_HOME_ACCESS_TOKEN
 
 
 class ControllerView(FormView):
@@ -17,19 +19,17 @@ class ControllerView(FormView):
     template_name = 'core/control.html'
     success_url = reverse_lazy('form')
 
-
 # Validate controller form
     def get(self, request):
-        cont = self.get_context_data()
-
+        context = self.get_context_data()
         try:
             item = Setting.objects.get(controller_name="bedroom_target_temperature")
-            cont["form"].fields["bedroom_target_temperature"].initial = item.value or 21
+            context["form"].fields["bedroom_target_temperature"].initial = item.value or 21
             item = Setting.objects.get(controller_name="hot_water_target_temperature")
-            cont["form"].fields["hot_water_target_temperature"].initial = item.value or 80
-            cont["form"].fields["bedroom_light"].initial = cont["data"]["bedroom_light"]
-            cont["form"].fields["bathroom_light"].initial = cont["data"]["bathroom_light"]
-            return self.render_to_response(cont)
+            context["form"].fields["hot_water_target_temperature"].initial = item.value or 80
+            context["form"].fields["bedroom_light"].initial = context["data"]["bedroom_light"]
+            context["form"].fields["bathroom_light"].initial = context["data"]["bathroom_light"]
+            return self.render_to_response(context)
         except:
             cont = {
                 "bedroom_target_temperature": 21,
@@ -37,7 +37,7 @@ class ControllerView(FormView):
                 "bedroom_light": 0,
                 "bathroom_light": 0
             }
-            return self.render_to_response(cont)
+            return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         context = super(ControllerView, self).get_context_data()
@@ -46,19 +46,19 @@ class ControllerView(FormView):
         r = json.loads(requests.get(SMART_HOME_API_URL, headers=headers).text)
         curr_values = dict([(i['name'], i['value']) for i in r["data"]])
         context['data'] = curr_values
-
-
-
         return context
 
     def get_initial(self):
         return {}
 
     def form_valid(self, form):
-
         try:
             cont = self.get_context_data()
-            form_data = form.cleaned_data
+
+            form_data_raw = form.cleaned_data
+            schema = SettingSchema()
+            form_data = schema.load(form_data_raw).data
+
             for controller_key, controller_val in form_data.items():
                 if controller_key not in CONTROLLER_WRITABLES:
                     obj = Setting.objects.get(controller_name=controller_key)
@@ -79,14 +79,15 @@ class ControllerView(FormView):
             headers = {"Authorization": "Bearer " + SMART_HOME_ACCESS_TOKEN}
             data = json.dumps(data_for_post_request)
             r1 = requests.post(SMART_HOME_API_URL, headers=headers, data=data)
-            pass
-
+            print("FORM SAVING!!!!!!!   ", r1.text)
+            print("FORM SAVING!!!!!!!  data  ", data)
         except:
             return HttpResponse('No connection to controllers API', status=502)
 
-        #super(ControllerView, self).form_valid(form)
-        smart_home_manager.delay()
-        addd.delay(1, 2)
+        # microservice for updating home controllers according formulated algo (homework)
+        #smart_home_manager.delay()
+
+
 
         #send_mail_task.delay(('noreply@example.com',), 'Celery cookbook test', 'test', {})
         return super(ControllerView, self).form_valid(form)

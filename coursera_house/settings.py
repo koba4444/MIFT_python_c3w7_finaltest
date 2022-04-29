@@ -119,13 +119,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-SMART_HOME_ACCESS_TOKEN = os.getenv('SMART_HOME_ACCESS_TOKEN', "133840882c0668216636778b362128e2779518dd054049eac5abde7c6e31e4aa")
+SMART_HOME_ACCESS_TOKEN = os.getenv('SMART_HOME_ACCESS_TOKEN', 'a32e2d96f0df30776fb59a02fac15dc0f74eedde612491165d58bbbe3aa7cd80')
 SMART_HOME_API_URL = os.getenv('SMART_HOME_API_URL', 'http://smarthome.webpython.graders.eldf.ru/api/user.controller')
 
+EMAIL_HOST = "smtp.rambler.ru"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "koba00@rambler.ru"
+EMAIL_HOST_PASSWORD = "koba9966"
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
 
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'EMAIL_HOST')
-EMAIL_PORT = os.getenv('EMAIL_PORT', 'EMAIL_PORT')
-EMAIL_RECEPIENT  = os.getenv('EMAIL_RECEPIENT', 'EMAIL_RECEPIENT')
+EMAIL_RECEPIENT  = os.getenv('EMAIL_RECEPIENT', 'koba00@mail.ru')
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
@@ -135,12 +139,4 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {}
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 5} #recomendation of https://www.youtube.com/watch?v=9RTZP16rvkQ
 
-CONTROLLER_WRITABLES = [
-    "bedroom_light",
-    "bathroom_light",
-    "air_conditioner",
-    "curtains",
-    "boiler",
-    "cold_water",
-    "hot_water",
-    "washing_machine"]
+
